@@ -1,6 +1,6 @@
 {
   "name": "bdthemes-element-pack-addon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Element Pack Addon - legacy widgets companion for Element Pack Pro",
   "main": "index.php",
   "scripts": {

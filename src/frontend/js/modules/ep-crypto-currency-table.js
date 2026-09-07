@@ -88,8 +88,11 @@
                 });
 
                 setTimeout(() => {
-                    table.column(2).nodes().each(function () {
-                        this.classList.remove('focus-item');
+                    // DataTables passes the node as the first argument; `this` is the API instance.
+                    table.column(2).nodes().each(function (node) {
+                        if (node && node.classList) {
+                            node.classList.remove('focus-item');
+                        }
                     });
                     getData();
                 }, 10000);

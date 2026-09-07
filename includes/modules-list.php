@@ -39,6 +39,160 @@ class Modules_List {
 	}
 
 	/**
+	 * Where each entry sat in Element Pack Pro's lists before the move: the slug
+	 * of the (still built-in) entry it directly followed, per tier.
+	 *
+	 * The order of these lists is not cosmetic. The asset optimizer concatenates
+	 * every enabled widget's CSS in list order, and a few stylesheets share
+	 * selectors (post-grid-tab and static-grid-tab both style `.gridtab`), so a
+	 * widget that moves to the end of the list can suddenly win or lose a
+	 * cascade it used to lose or win. Re-inserting after the original neighbour
+	 * keeps the bundle identical to what Pro produced on its own.
+	 *
+	 * @return array<string, string> slug => slug it followed
+	 */
+	public static function get_anchors() {
+		return [
+			'age-gate'                       => 'advanced-progress-bar',
+			'air-pollution'                  => 'advanced-progress-bar',
+			'call-out'                       => 'calendly',
+			'crypto-currency-card'           => 'creative-button',
+			'crypto-currency-table'          => 'creative-button',
+			'crypto-currency-grid'           => 'creative-button',
+			'crypto-currency-carousel'       => 'creative-button',
+			'crypto-currency-ticker'         => 'creative-button',
+			'crypto-currency-chart'          => 'creative-button',
+			'crypto-currency-chart-carousel' => 'creative-button',
+			'crypto-currency-list'           => 'creative-button',
+			'dark-mode'                      => 'coupon-code',
+			'dropbar'                        => 'device-slider',
+			'fancy-card'                     => 'facebook-feed-carousel',
+			'honeycombs'                     => 'hover-video',
+			'image-accordion'                => 'instagram',
+			'member'                         => 'marker',
+			'post-slider'                    => 'panel-slider',
+			'post-card'                      => 'panel-slider',
+			'post-block'                     => 'panel-slider',
+			'post-block-modern'              => 'panel-slider',
+			'post-gallery'                   => 'progress-pie',
+			'post-grid'                      => 'progress-pie',
+			'post-grid-tab'                  => 'progress-pie',
+			'post-list'                      => 'progress-pie',
+			'post-title'                     => 'progress-pie',
+			'post-comments'                  => 'progress-pie',
+			'post-content'                   => 'progress-pie',
+			'post-featured-image'            => 'progress-pie',
+			'post-info'                      => 'progress-pie',
+			'slinky-vertical-menu'           => 'slideshow',
+			'single-post'                    => 'static-grid-tab',
+			'timeline'                       => 'tags-cloud',
+			'thumb-gallery'                  => 'trailer-box',
+			'bbpress-forum-form'             => 'acf-list',
+			'bbpress-forum-index'            => 'acf-list',
+			'bbpress-single-forum'           => 'acf-list',
+			'bbpress-topic-index'            => 'acf-list',
+			'bbpress-topic-form'             => 'acf-list',
+			'bbpress-single-topic'           => 'acf-list',
+			'bbpress-reply-form'             => 'acf-list',
+			'bbpress-single-reply'           => 'acf-list',
+			'bbpress-topic-tags'             => 'acf-list',
+			'bbpress-single-tag'             => 'acf-list',
+			'bbpress-single-view'            => 'acf-list',
+			'bbpress-stats'                  => 'acf-list',
+			'buddypress-friends'             => 'acf-list',
+			'buddypress-group'               => 'acf-list',
+			'buddypress-member'              => 'acf-list',
+			'charitable-campaigns'           => 'contact-form-7',
+			'charitable-donations'           => 'contact-form-7',
+			'charitable-donors'              => 'contact-form-7',
+			'charitable-donation-form'       => 'contact-form-7',
+			'charitable-stat'                => 'contact-form-7',
+			'charitable-login'               => 'contact-form-7',
+			'charitable-registration'        => 'contact-form-7',
+			'charitable-profile'             => 'contact-form-7',
+			'download-monitor'               => 'contact-form-7',
+			'edd-cart'                       => 'contact-form-7',
+			'edd-category-grid'              => 'contact-form-7',
+			'edd-category-carousel'          => 'contact-form-7',
+			'edd-checkout'                   => 'contact-form-7',
+			'edd-login'                      => 'contact-form-7',
+			'edd-mini-cart'                  => 'contact-form-7',
+			'edd-product'                    => 'contact-form-7',
+			'edd-product-carousel'           => 'contact-form-7',
+			'edd-product-reviews'            => 'contact-form-7',
+			'edd-product-review-carousel'    => 'contact-form-7',
+			'edd-profile-editor'             => 'contact-form-7',
+			'edd-purchase-history'           => 'contact-form-7',
+			'edd-register'                   => 'contact-form-7',
+			'edd-tabs'                       => 'contact-form-7',
+			'edd-download-history'           => 'easy-digital-downloads',
+			'everest-forms'                  => 'easy-digital-downloads',
+			'give-donation-history'          => 'forminator-forms',
+			'give-donor-wall'                => 'forminator-forms',
+			'give-form-grid'                 => 'forminator-forms',
+			'give-form'                      => 'forminator-forms',
+			'give-goal'                      => 'forminator-forms',
+			'give-login'                     => 'forminator-forms',
+			'give-profile-editor'            => 'forminator-forms',
+			'give-receipt'                   => 'forminator-forms',
+			'give-register'                  => 'forminator-forms',
+			'give-totals'                    => 'forminator-forms',
+			'layer-slider'                   => 'instagram-feed',
+		];
+	}
+
+	/**
+	 * Merge our entries into Pro's tiers at their original positions.
+	 *
+	 * Entries sharing an anchor keep their relative order (they are inserted as a
+	 * block right after the anchor). An anchor that no longer exists in Pro's
+	 * list falls back to appending at the end of the tier.
+	 *
+	 * @param array $settings_fields Pro's tiers.
+	 * @return array
+	 */
+	public static function merge_into( array $settings_fields ) {
+		$anchors = self::get_anchors();
+
+		foreach ( self::get_settings_fields() as $tier => $entries ) {
+			if ( empty( $entries ) ) {
+				continue;
+			}
+			if ( ! isset( $settings_fields[ $tier ] ) || ! is_array( $settings_fields[ $tier ] ) ) {
+				$settings_fields[ $tier ] = [];
+			}
+
+			// Group by anchor, preserving order within each group.
+			$groups = [];
+			foreach ( $entries as $entry ) {
+				$anchor = isset( $anchors[ $entry['name'] ] ) ? $anchors[ $entry['name'] ] : '';
+				$groups[ $anchor ][] = $entry;
+			}
+
+			$list = $settings_fields[ $tier ];
+			foreach ( $groups as $anchor => $group ) {
+				$at = null;
+				if ( '' !== $anchor ) {
+					foreach ( $list as $i => $item ) {
+						if ( isset( $item['name'] ) && $item['name'] === $anchor ) {
+							$at = $i + 1;
+							break;
+						}
+					}
+				}
+				if ( null === $at ) {
+					$list = array_merge( $list, $group );
+				} else {
+					array_splice( $list, $at, 0, $group );
+				}
+			}
+			$settings_fields[ $tier ] = $list;
+		}
+
+		return $settings_fields;
+	}
+
+	/**
 	 * @param string $plugin_path e.g. easy-digital-downloads/easy-digital-downloads.php
 	 * @return bool
 	 */

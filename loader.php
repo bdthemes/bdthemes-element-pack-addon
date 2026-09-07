@@ -40,7 +40,12 @@ class Loader {
 		require_once BDTEPA_INC_PATH . 'class-wpml.php';
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_vendor_scripts' ], 99999 );
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_bundles' ], 99999 );
+		// Priority 9: Pro enqueues ep-styles at 10, and our stylesheet has to come
+		// BEFORE it. In the optimized bundle (and in Pro before the move) our
+		// widgets' CSS sat in the middle of Pro's list, so where selectors are
+		// shared (post-grid-tab / static-grid-tab both style `.gridtab`) Pro's
+		// later rules won. Loading ours first keeps that cascade in the editor.
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_bundles' ], 9 );
 		add_action( 'elementor/elements/categories_registered', [ $this, 'register_categories' ] );
 		add_action( 'elementor/init', [ $this, 'init_wpml' ] );
 	}
@@ -137,8 +142,9 @@ class Loader {
 	 * there, which are the same kind of bundle built from this plugin's modules.
 	 */
 	public function register_bundles() {
-		wp_register_style( 'ep-addon-styles', BDTEPA_ASSETS_URL . 'css/ep-addon-styles.css', [ 'ep-styles' ], BDTEPA_VER );
-		wp_register_script( 'ep-addon-scripts', BDTEPA_ASSETS_URL . 'js/ep-addon-scripts.min.js', [ 'jquery', 'ep-scripts' ], BDTEPA_VER, true );
+		// Same deps as Pro's per-widget styles; must NOT depend on ep-styles (see the hook priority note).
+		wp_register_style( 'ep-addon-styles', BDTEPA_ASSETS_URL . 'css/ep-addon-styles.css', [ 'bdt-uikit', 'ep-helper' ], BDTEPA_VER );
+		wp_register_script( 'ep-addon-scripts', BDTEPA_ASSETS_URL . 'js/ep-addon-scripts.min.js', [ 'jquery', 'bdt-uikit', 'ep-scripts' ], BDTEPA_VER, true );
 
 		if ( $this->is_edit_or_preview() ) {
 			wp_enqueue_style( 'ep-addon-styles' );

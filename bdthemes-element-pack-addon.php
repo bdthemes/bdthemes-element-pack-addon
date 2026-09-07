@@ -3,7 +3,7 @@
  * Plugin Name: Element Pack Addon
  * Plugin URI: https://elementpack.pro/
  * Description: Companion plugin for Element Pack Pro. It carries the legacy widgets that are no longer bundled with Element Pack Pro (Post widgets, Crypto Currency, bbPress, BuddyPress, Charitable, Give, Easy Digital Downloads, Timeline and more) so existing pages keep working.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: BdThemes
  * Author URI: https://bdthemes.com/
  * Text Domain: bdthemes-element-pack
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'BDTEPA_VER', '1.0.0' );
+define( 'BDTEPA_VER', '1.0.1' );
 define( 'BDTEPA__FILE__', __FILE__ );
 define( 'BDTEPA_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BDTEPA_URL', plugin_dir_url( __FILE__ ) );
@@ -59,17 +59,9 @@ add_filter( 'element_pack/modules/external_sources', function ( $sources ) {
 } );
 
 add_filter( 'element_pack/modules/settings_fields', function ( $settings_fields ) {
-	foreach ( \ElementPackAddon\Modules_List::get_settings_fields() as $tier => $entries ) {
-		if ( empty( $entries ) ) {
-			continue;
-		}
-		if ( ! isset( $settings_fields[ $tier ] ) || ! is_array( $settings_fields[ $tier ] ) ) {
-			$settings_fields[ $tier ] = [];
-		}
-		$settings_fields[ $tier ] = array_merge( $settings_fields[ $tier ], $entries );
-	}
-
-	return $settings_fields;
+	// Entries go back to the positions they had in Pro's lists (see
+	// Modules_List::get_anchors() for why the order matters).
+	return \ElementPackAddon\Modules_List::merge_into( (array) $settings_fields );
 } );
 
 /**

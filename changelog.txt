@@ -1,3 +1,12 @@
+## 1.0.1 [7th September 2026]
+
+### Fixed
+
+- Widgets are re-inserted at the positions they had in Element Pack Pro's widget lists instead of being appended at the end, so the asset optimizer bundle keeps the same CSS order as before the move (Post Grid Tab lost its tab colors to the Static Grid Tab stylesheet otherwise)
+- Editor/preview stylesheet now loads before Pro's bundle for the same reason
+- Crypto Currency Table: JavaScript error ("Cannot read properties of undefined (reading 'remove')") thrown 10 seconds after load when clearing price highlights fixed
+- Pro's optimized asset bundle is invalidated when this plugin is activated or deactivated, so the moved widgets no longer render unstyled until the Element Pack settings are saved
+
 ## 1.0.0 [7th September 2026]
 
 ### Added
