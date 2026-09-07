@@ -88,6 +88,18 @@ function bdthemes_element_pack_addon_load() {
 add_action( 'plugins_loaded', 'bdthemes_element_pack_addon_load', 10 );
 
 /**
+ * Pro's optimized asset bundle (uploads/element-pack/minified) is built from
+ * the modules registered at build time. Forget the fingerprint it was built
+ * from on (de)activation so Pro rebuilds it on the next request, otherwise our
+ * widgets render without their CSS/JS until someone saves the EP settings.
+ */
+function bdthemes_element_pack_addon_invalidate_optimized_assets() {
+	delete_option( 'element_pack_optimized_assets_fingerprint' );
+}
+register_activation_hook( __FILE__, 'bdthemes_element_pack_addon_invalidate_optimized_assets' );
+register_deactivation_hook( __FILE__, 'bdthemes_element_pack_addon_invalidate_optimized_assets' );
+
+/**
  * Element Pack Pro is active and exposes the companion-module hooks.
  *
  * A capability check rather than a version compare, so development builds of
