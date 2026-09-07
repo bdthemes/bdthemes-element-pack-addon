@@ -1,0 +1,20 @@
+# Dependencies
+/node_modules
+package-lock.json
+
+# Build output staging + zips
+/bdthemes-element-pack-addon
+*.zip
+
+# Generated concat source
+/src/editor/js/ep-addon-scripts.js
+
+# Language files
+*.po
+*.mo
+
+# System / editor files
+.DS_Store
+.idea
+.claude
+.cursor

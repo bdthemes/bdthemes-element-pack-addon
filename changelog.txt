@@ -1,0 +1,10 @@
+## 1.0.0 [7th September 2026]
+
+### Added
+
+- Initial release. Carries the 85 legacy widgets removed from Element Pack Pro:
+- Post widgets: Post Block, Post Block Modern, Post Card, Post Comments, Post Content, Post Featured Image, Post Gallery, Post Grid, Post Grid Tab, Post Info, Post List, Post Slider, Post Title, Single Post, Thumb Gallery, Timeline
+- General widgets: Age Gate, Air Pollution, Call Out, Dark Mode, Dropbar, Fancy Card, Honeycombs, Image Accordion, Member, Slinky Vertical Menu
+- Crypto Currency widgets: Card, Carousel, Chart, Chart Carousel, Grid, List, Table, Ticker
+- Third-party widgets: bbPress (12), BuddyPress (3), Charitable (8), Give (10), Easy Digital Downloads (15), Download Monitor, Everest Forms, Layer Slider
+- Widgets keep their original names, settings and dashboard toggles, so pages built with Element Pack Pro keep working once this plugin is active

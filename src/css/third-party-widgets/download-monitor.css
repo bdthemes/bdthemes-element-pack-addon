@@ -1,0 +1,36 @@
+.bdt-download-monitor-button {
+  text-align: start;
+}
+.bdt-download-monitor-button .bdt-dm-description {
+  display: inline-block;
+}
+.bdt-download-monitor-button .bdt-dm-description .bdt-dm-title {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.bdt-download-monitor-button .bdt-dm-description .bdt-dm-meta > * {
+  display: inline-block;
+  font-size: 12px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  position: relative;
+}
+.bdt-download-monitor-button .bdt-dm-description .bdt-dm-meta * + * {
+  margin-inline-start: 8px;
+}
+.bdt-download-monitor-button .bdt-dm-description .bdt-dm-meta * + *:before {
+  content: '';
+  position: absolute;
+  inline-size: 1px;
+  block-size: 10px;
+  border-inline-start: 1px solid;
+  inset-block-start: 9%;
+  inset-inline-start: -6px;
+  opacity: 0.5;
+}
+.bdt-download-monitor-button .bdt-dm-button-icon {
+  display: inline-flex;
+}
+.bdt-download-monitor-button .bdt-dm-button-icon svg {
+  inline-size: 1em;
+}

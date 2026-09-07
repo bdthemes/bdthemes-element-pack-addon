@@ -1,0 +1,105 @@
+.bdt-crypto-currency-chart-carousel {
+  position: relative;
+}
+.bdt-crypto-currency-chart-carousel-item {
+  background: #fff;
+  border: 1px solid #dedde1;
+  position: relative;
+  block-size: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.bdt-crypto-currency-chart-carousel-chart {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+}
+.bdt-crypto-currency-chart-carousel-head-content {
+  padding: 20px;
+}
+.bdt-crypto-currency-chart-carousel-head-inner-content,
+.bdt-crypto-currency-chart-carousel-bottom-inner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bdt-crypto-currency-chart-carousel-head-inner-content {
+  margin-block-end: 20px;
+}
+.bdt-crypto-currency-chart-carousel-bottom-content {
+  position: absolute;
+  inset-block-end: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inset-inline: 0;
+  margin: 20px;
+}
+.bdt-crypto-currency-chart-carousel-title {
+  font-size: 16px;
+  text-transform: capitalize;
+  color: #444454;
+  font-weight: 500;
+}
+.bdt-crypto-currency-chart-carousel-list-change {
+  font-size: 14px;
+  position: relative;
+  font-weight: 500;
+}
+.bdt-crypto-currency-chart-carousel-list-change.up::before,
+.bdt-crypto-currency-chart-carousel-list-change.down::before {
+  content: '';
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  inset-inline-start: -20px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  border-inline-start: 7px solid transparent;
+  border-inline-end: 7px solid transparent;
+}
+.bdt-crypto-currency-chart-carousel-list-change.up::before {
+  border-block-end: 10px solid #0236c0;
+}
+.bdt-crypto-currency-chart-carousel-list-change.down::before {
+  border-block-start: 10px solid #05cc00;
+}
+.bdt-crypto-currency-chart-carousel-price-l {
+  font-size: 25px;
+  font-weight: 700;
+  color: #494d58;
+}
+.bdt-crypto-currency-chart-carousel-price-s {
+  font-size: 14px;
+  color: #3f3f46;
+  font-weight: 500;
+}
+.bdt-crypto-currency-chart-carousel-count-text,
+.bdt-crypto-currency-chart-carousel-date {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+.bdt-crypto-currency-chart-carousel-count-text svg {
+  inline-size: 22px;
+  block-size: 22px;
+}
+/* Responsive */
+@media (min-width: 768px) {
+  .bdt-crypto-currency-chart-carousel-bottom-content {
+    margin: 30px;
+  }
+  .bdt-crypto-currency-chart-carousel-head-content {
+    padding: 30px;
+  }
+}
+@media (min-width: 1024px) {
+  .bdt-crypto-currency-chart-carousel-bottom-content {
+    margin: 40px;
+  }
+  .bdt-crypto-currency-chart-carousel-head-content {
+    padding: 40px;
+  }
+}

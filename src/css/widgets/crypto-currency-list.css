@@ -1,0 +1,52 @@
+.bdt-crypto-currency-list {
+  display: grid;
+}
+.bdt-crypto-currency-list-item {
+  background: #fff;
+  padding: 12px;
+  border: 1px solid #e7e8e9;
+  border-radius: 5px;
+}
+.bdt-crypto-currency-list-content {
+  display: flex;
+  align-items: center;
+  block-size: 100%;
+  justify-content: space-between;
+}
+.bdt-crypto-currency-list-inner {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+.bdt-crypto-currency-list-title {
+  margin: 0;
+  font-size: 13px;
+  color: #414c60;
+  font-weight: 500;
+}
+.bdt-crypto-currency-list-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #57586a;
+}
+.bdt-crypto-currency-list-img img {
+  inline-size: 25px;
+  min-inline-size: 25px;
+  block-size: 25px;
+  vertical-align: middle;
+}
+/* Responsive */
+@media (min-width: 768px) {
+  .bdt-crypto-currency-list-item {
+    padding: 20px;
+  }
+  .bdt-crypto-currency-list-img img {
+    inline-size: 30px;
+    min-inline-size: 30px;
+    block-size: 30px;
+  }
+  .bdt-crypto-currency-list-title,
+  .bdt-crypto-currency-list-price {
+    font-size: 15px;
+  }
+}

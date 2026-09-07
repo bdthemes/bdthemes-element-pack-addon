@@ -1,0 +1,172 @@
+.bdt-post-grid-tab img[data-src][src*='data:image'] {
+  background: rgba(152, 152, 152, 0.07);
+  background-image: url('../images/loading.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.bdt-post-grid-tab .gridtab > dt {
+  line-height: normal;
+}
+.bdt-post-grid-tab .bdt-post-grid-tab-meta {
+  display: inline-flex;
+}
+.bdt-post-grid-tab-author {
+  text-transform: capitalize;
+}
+.bdt-post-grid-tab-thumbnail {
+  overflow: hidden;
+  cursor: pointer;
+}
+.bdt-post-grid-tab-thumbnail img {
+  block-size: 140px;
+  inline-size: 100%;
+  object-fit: cover;
+  vertical-align: top;
+  transition: transform 250ms cubic-bezier(0.3, 0.91, 0.58, 1);
+}
+.bdt-post-grid-tab-thumbnail:hover img {
+  transform: scale(1.1);
+}
+.bdt-post-grid-tab-item-title {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+.bdt-post-grid-tab-title {
+  cursor: pointer;
+}
+.bdt-post-grid-desc-inner {
+  padding: 50px;
+}
+.bdt-post-grid-tab-image-inner {
+  overflow: hidden;
+  block-size: 100%;
+}
+.bdt-post-grid-tab-image-inner img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  vertical-align: top;
+}
+.bdt-post-grid-tab-excerpt p:last-child {
+  margin-block-end: 0;
+}
+.bdt-post-grid-tab-readmore svg {
+  inline-size: 1em;
+  block-size: 1em;
+}
+.bdt-post-grid-tab-readmore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+/* GridTab v2.1.1 */
+.gridtab,
+.gridtab > dt,
+.gridtab > dd {
+  position: relative;
+}
+.gridtab {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+.gridtab > dt {
+  border-style: solid;
+}
+.gridtab > dd {
+  z-index: 1;
+  display: none;
+  flex-basis: 100%;
+  border-style: solid;
+}
+.gridtab > dd > .gridtab__controls {
+  position: absolute;
+  inset-inline-end: 10px;
+  inset-block-start: 10px;
+  display: flex;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__close {
+  order: 1;
+  margin-inline-start: 5px;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__close::before,
+.gridtab > dd > .gridtab__controls > .gridtab__close::after {
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.gridtab > dd > .gridtab__controls > .gridtab__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.gridtab > dd > .gridtab__controls > .gridtab__arrow,
+.gridtab > dd > .gridtab__controls > .gridtab__close {
+  display: block;
+  inline-size: 30px;
+  block-size: 30px;
+  overflow: hidden;
+  background: #666;
+  text-indent: -999px;
+  position: relative;
+  border-radius: 50px;
+  transition: all 300ms ease-out;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__arrow:hover,
+.gridtab > dd > .gridtab__controls > .gridtab__close:hover {
+  background: #333;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__close:hover {
+  transform: rotate(90deg);
+}
+.gridtab > dd > .gridtab__controls > .gridtab__arrow::before,
+.gridtab > dd > .gridtab__controls > .gridtab__arrow::after,
+.gridtab > dd > .gridtab__controls > .gridtab__close::before,
+.gridtab > dd > .gridtab__controls > .gridtab__close::after {
+  position: absolute;
+  inline-size: 2px;
+  block-size: 10px;
+  content: '';
+  display: block;
+  background: #fff;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__arrow::before,
+.gridtab > dd > .gridtab__controls > .gridtab__arrow::after {
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: rotate(45deg);
+  transform-origin: right;
+  margin-block-start: -6px;
+  margin-inline-start: -3px;
+  block-size: 8px;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__arrow::after {
+  margin-block-start: -3px;
+  transform: rotate(-45deg);
+}
+.gridtab > dd > .gridtab__controls > .gridtab__arrow.is-disabled {
+  opacity: 0.25;
+}
+.gridtab > dd > .gridtab__controls > .gridtab__next {
+  transform: scaleX(-1);
+}
+.gridtab > dt {
+  transition: background 1s;
+  background: #f2f2f2;
+}
+.gridtab > dt::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+}
+.gridtab > dt.is-disabled {
+  pointer-events: none;
+}
+.gridtab > dt.is-active {
+  z-index: 2;
+}
+.gridtab > dt > img {
+  max-inline-size: 100%;
+  float: inline-start;
+  block-size: auto;
+}

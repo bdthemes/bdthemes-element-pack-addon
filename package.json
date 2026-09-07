@@ -1,0 +1,31 @@
+{
+  "name": "bdthemes-element-pack-addon",
+  "version": "1.0.0",
+  "description": "Element Pack Addon - legacy widgets companion for Element Pack Pro",
+  "main": "index.php",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development grunt",
+    "build": "cross-env NODE_ENV=production grunt",
+    "clean": "rimraf bdthemes-element-pack-addon",
+    "zip": "npm run build && npm run clean && rm -f bdthemes-element-pack-addon-v.$npm_package_version.zip && rsync -av --exclude-from=.buildignore . bdthemes-element-pack-addon && zip -rq bdthemes-element-pack-addon-v.$npm_package_version.zip bdthemes-element-pack-addon && rm -rf bdthemes-element-pack-addon"
+  },
+  "keywords": [
+    "bdthemes-element-pack",
+    "elementor"
+  ],
+  "author": "bdthemes",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "grunt": "^1.6.1",
+    "grunt-cli": "^1.5.0",
+    "grunt-contrib-concat": "^2.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-less": "^3.0.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-terser": "^2.0.0",
+    "jit-grunt": "^0.10.0",
+    "rimraf": "^5.0.5",
+    "terser": "^5.21.0"
+  }
+}
