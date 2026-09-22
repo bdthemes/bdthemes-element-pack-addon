@@ -3,7 +3,7 @@
  * Plugin Name: Element Pack Addon
  * Plugin URI: https://elementpack.pro/
  * Description: Companion plugin for Element Pack Pro. It carries the legacy widgets that are no longer bundled with Element Pack Pro (Post widgets, Crypto Currency, bbPress, BuddyPress, Charitable, Give, Easy Digital Downloads, Timeline and more) so existing pages keep working.
- * Version: 1.0.1
+ * Version: 1.0.0
  * Author: BdThemes
  * Author URI: https://bdthemes.com/
  * Text Domain: bdthemes-element-pack
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'BDTEPA_VER', '1.0.1' );
+define( 'BDTEPA_VER', '1.0.0' );
 define( 'BDTEPA__FILE__', __FILE__ );
 define( 'BDTEPA_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BDTEPA_URL', plugin_dir_url( __FILE__ ) );

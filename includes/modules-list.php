@@ -56,6 +56,7 @@ class Modules_List {
 			'age-gate'                       => 'advanced-progress-bar',
 			'air-pollution'                  => 'advanced-progress-bar',
 			'call-out'                       => 'calendly',
+			'carousel'                       => 'calendly',
 			'crypto-currency-card'           => 'creative-button',
 			'crypto-currency-table'          => 'creative-button',
 			'crypto-currency-grid'           => 'creative-button',
@@ -70,6 +71,7 @@ class Modules_List {
 			'honeycombs'                     => 'hover-video',
 			'image-accordion'                => 'instagram',
 			'member'                         => 'marker',
+			'news-ticker'                    => 'navbar',
 			'post-slider'                    => 'panel-slider',
 			'post-card'                      => 'panel-slider',
 			'post-block'                     => 'panel-slider',
@@ -219,6 +221,28 @@ class Modules_List {
 			'element_pack_active_modules'     => [],
 			'element_pack_elementor_extend'   => [],
 			'element_pack_third_party_widget' => [],
+		];
+
+		$fields['element_pack_active_modules'][] = [
+			'name'         => 'carousel',
+			'label'        => esc_html__('Carousel', 'bdthemes-element-pack'),
+			'type'         => 'checkbox',
+			'default'      => 'on',
+			'widget_type'  => 'pro',
+			'content_type' => 'post carousel',
+			'demo_url'     => 'https://elementpack.pro/demo/element/carousel',
+			'video_url'    => 'https://youtu.be/biF3GtBf0qc',
+		];
+
+		$fields['element_pack_active_modules'][] = [
+			'name'         => 'news-ticker',
+			'label'        => esc_html__('News Ticker', 'bdthemes-element-pack'),
+			'type'         => 'checkbox',
+			'default'      => 'on',
+			'widget_type'  => 'pro',
+			'content_type' => 'post',
+			'demo_url'     => 'https://elementpack.pro/demo/element/news-ticker',
+			'video_url'    => 'https://youtu.be/FmpFhNTR7uY',
 		];
 
 		$fields['element_pack_active_modules'][] = [

@@ -53,6 +53,28 @@ class Wpml {
 			'integration-class' => __NAMESPACE__ . '\\WPML_ElementPack_Post_Info',
 		];
 
+		$nodes_to_translate[ 'bdt-carousel' ] = [
+			'conditions' => [ 'widgetType' => 'bdt-carousel' ],
+			'fields'     => [
+				[
+					'field'       => 'read_more_text',
+					'type'        => esc_html__( 'Read More Text', 'bdthemes-element-pack' ),
+					'editor_type' => 'LINE',
+				],
+			],
+		];
+
+		$nodes_to_translate[ 'bdt-news-ticker' ] = [
+			'conditions' => [ 'widgetType' => 'bdt-news-ticker' ],
+			'fields'     => [
+				[
+					'field'       => 'news_label',
+					'type'        => esc_html__( 'Label', 'bdthemes-element-pack' ),
+					'editor_type' => 'LINE',
+				],
+			],
+		];
+
 		$nodes_to_translate[ 'bdt-age-gate' ] = [
 			'conditions' => [ 'widgetType' => 'bdt-age-gate' ],
 			'fields'     => [
