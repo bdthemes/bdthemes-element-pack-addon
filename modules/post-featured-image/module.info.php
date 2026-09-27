@@ -5,5 +5,4 @@ return [
 	'title'              => esc_html__('Post Featured Image', 'bdthemes-element-pack'),
 	'required'           => true,
 	'default_activation' => true,
-	'has_style'			 => true,
 ];

@@ -59,7 +59,7 @@ class Post_Slider extends Module_Base {
 		if ($this->ep_is_edit_mode()) {
 			return ['imagesloaded', 'ep-addon-scripts'];
 		} else {
-			return ['imagesloaded'];
+			return ['bdt-uikit', 'element-pack-helper', 'imagesloaded'];
 		}
 	}
 

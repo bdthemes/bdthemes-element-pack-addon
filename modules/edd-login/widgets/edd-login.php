@@ -44,7 +44,7 @@ class EDD_Login extends Module_Base {
 		if ($this->ep_is_edit_mode()) {
 			return ['ep-addon-styles'];
 		} else {
-			return ['ep-font', 'ep-edd-login'];
+			return ['bdt-uikit', 'ep-helper', 'ep-font', 'ep-edd-login'];
 		}
 	}
 
@@ -52,7 +52,7 @@ class EDD_Login extends Module_Base {
 		if ($this->ep_is_edit_mode()) {
 			return ['recaptcha', 'ep-google-login', 'ep-addon-scripts'];
 		} else {
-			return ['recaptcha', 'ep-google-login', 'ep-edd-login'];
+			return ['bdt-uikit', 'element-pack-helper', 'recaptcha', 'ep-google-login', 'ep-edd-login'];
 		}
 	}
 

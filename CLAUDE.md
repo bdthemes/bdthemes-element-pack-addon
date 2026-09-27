@@ -31,10 +31,11 @@ npm install
 npm run build   # less + concat + terser + copy -> assets/
 npm run dev     # same, then watch
 npm run zip     # build, then stage per .buildignore and zip
+npm run check:assets   # php scripts/check-module-asset-flags.php: module.info.php flags vs assets/, assets/ vs src/
 ```
 
 Sources: `src/css/widgets/*.css`, `src/css/third-party-widgets/*.css`, `src/frontend/js/modules/ep-*.js`, `src/vendor/js/`. Never edit `assets/` by hand. `src/editor/js/ep-addon-scripts.js` is a generated concat file (git-ignored).
 
 ## Adding a module
 
-Copy the folder from Pro, apply the three transformations above, add its settings entry to `includes/modules-list.php`, add its CSS/JS to `src/`, rebuild. Pro's `element-pack-filters.php` helpers (`element_pack_is_widget_enabled()` etc.) work unchanged for addon slugs.
+Copy the folder from Pro, apply the three transformations above, add its settings entry to `includes/modules-list.php`, add its CSS/JS to `src/`, rebuild. Set `has_style` / `has_script` in its `module.info.php` exactly when the build produced `assets/css/ep-<slug>.css` / `assets/js/modules/ep-<slug>.min.js`: Pro registers `ep-<slug>` from those flags alone, so a missing flag drops the file and a stray one registers a 404. `npm run check:assets` checks every module (Pro's `tests/Unit/AddonModuleAssetFlagsTest.php` runs the same check). Pro's `element-pack-filters.php` helpers (`element_pack_is_widget_enabled()` etc.) work unchanged for addon slugs.

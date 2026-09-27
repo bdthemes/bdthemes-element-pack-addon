@@ -5,4 +5,5 @@ return [
 	'title'              => esc_html__('EDD Register', 'bdthemes-element-pack'),
 	'required'           => true,
 	'default_activation' => true,
+	'has_style'          => true,
 ];

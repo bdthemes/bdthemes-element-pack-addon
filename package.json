@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development grunt",
     "build": "cross-env NODE_ENV=production grunt",
+    "check:assets": "php scripts/check-module-asset-flags.php",
     "clean": "rimraf bdthemes-element-pack-addon",
     "zip": "npm run build && npm run clean && rm -f bdthemes-element-pack-addon-v.$npm_package_version.zip && rsync -av --exclude-from=.buildignore . bdthemes-element-pack-addon && zip -rq bdthemes-element-pack-addon-v.$npm_package_version.zip bdthemes-element-pack-addon && rm -rf bdthemes-element-pack-addon"
   },
