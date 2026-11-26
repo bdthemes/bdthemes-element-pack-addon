@@ -805,7 +805,13 @@ class Honeycombs extends Module_Base {
         var showDesc        = settings.description_display === 'yes';
         var descVisibility  = showDesc ? '' : ' honeycomb-des-visibility-hide';
         var titleVisibility = ( showIcon || showTitle ) ? '' : ' honeycomb-title-visibility-hide';
-        var titleTag        = settings.title_tag || 'h3';
+        // Settings are page data (any editor can save them): allow-list the tag and
+        // only link web, mail, phone, relative and # URLs.
+        var titleTag        = elementor.helpers.validateHTMLTag( settings.title_tag || 'h3' );
+        var epSafeLinkUrl   = function( url ) {
+            url = String( url || '' ).trim();
+            return /^(https?:|mailto:|tel:|\/|#|\?|\.)/i.test( url ) || ! /^[^\/?#]*:/.test( url ) ? url : '';
+        };
 
         var itemsWidth = ( settings.items_width && settings.items_width.size !== undefined ) ? settings.items_width.size : 250;
         var itemsWidthTablet = ( settings.items_width_tablet && settings.items_width_tablet.size !== undefined ) ? settings.items_width_tablet.size : 250;
@@ -832,7 +838,7 @@ class Honeycombs extends Module_Base {
                     var isInvisible = item.item_invisible === 'yes';
                     var itemClass   = 'bdt-comb elementor-repeater-item-' + ( item._id !== undefined ? item._id : '' );
                     if ( isInvisible ) { itemClass += ' bdt-invisible bdt-comb placeholder hide elementor-repeater-item-' + ( item._id !== undefined ? item._id : '' ); }
-                    var itemHref = item.honeycombs_link && item.honeycombs_link.url ? item.honeycombs_link.url : 'javascript:void(0);';
+                    var itemHref = ( item.honeycombs_link && epSafeLinkUrl( item.honeycombs_link.url ) ) || 'javascript:void(0);';
                     var iconHTML = elementor.helpers.renderIcon( view, item.honeycombs_item_icon, { 'aria-hidden': true }, 'i', 'object' );
                 #>
                 <a class="{{ itemClass }}" href="{{ itemHref }}"<# if ( item.honeycombs_link && item.honeycombs_link.url && item.honeycombs_link.is_external ) { #> target="_blank"<# } #><# if ( item.honeycombs_link && item.honeycombs_link.nofollow ) { #> rel="nofollow"<# } #>>

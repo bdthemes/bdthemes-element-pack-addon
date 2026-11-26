@@ -3,6 +3,7 @@
 namespace ElementPackAddon\Modules\PostTitle\Widgets;
 
 use ElementPack\Base\Module_Base;
+use ElementPack\Utils;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -323,7 +324,7 @@ class Post_Title extends Module_Base {
 
 	public function render() {
 		$settings  = $this->get_settings_for_display();
-		$title_tag = $settings['bdt_title_tag'];
+		$title_tag = Utils::get_valid_html_tag( $settings['bdt_title_tag'] );
 
 		$this->bdt_set_single_post_preview_data();
 

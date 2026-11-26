@@ -1382,6 +1382,7 @@ class Member extends Module_Base {
 
 	/**
 	 * Shared JS template fragment for social icons (Member editor preview).
+	 * Uses epSafeLinkUrl() from content_template().
 	 *
 	 * @param string $icons_extra_class Extra classes for `.bdt-member-icons` (matches skin render_social_icons() second arg).
 	 */
@@ -1410,13 +1411,14 @@ class Member extends Module_Base {
 							linkUrl = link.social_link || '#';
 							linkExtra = ' target="_blank"';
 						}
+						linkUrl = epSafeLinkUrl( linkUrl ) || '#';
 						var tooltipAttr = '';
 						if ( settings.social_icon_tooltip === 'yes' && link.social_link_title ) {
-							var tipText = String( link.social_link_title ).replace( /<[^>]+>/g, '' ).replace( /"/g, '&quot;' );
-							tooltipAttr = ' data-bdt-tooltip="title: ' + tipText + ';"';
+							var tipText = String( link.social_link_title ).replace( /<[^>]+>/g, '' );
+							tooltipAttr = ' data-bdt-tooltip="' + _.escape( 'title: ' + tipText + ';' ) + '"';
 						}
 					#>
-						<a class="bdt-member-icon elementor-repeater-item-{{ link._id }}" href="<# print( linkUrl ); #>"<# print( linkExtra ); #><# print( tooltipAttr ); #>>
+						<a class="bdt-member-icon elementor-repeater-item-{{ link._id }}" href="{{ linkUrl }}"<# print( linkExtra ); #><# print( tooltipAttr ); #>>
 							<# if ( socialIconHTML && socialIconHTML.rendered && ( ! link.social_icon || migrated ) ) { #>
 								{{{ socialIconHTML.value }}}
 							<# } else if ( link.social_icon ) { #>
@@ -1432,6 +1434,12 @@ class Member extends Module_Base {
 	protected function content_template() {
 		?>
 		<#
+		// Settings are page data (any editor can save them): values go into attributes
+		// HTML-escaped, and links accept only web, mail, phone, relative and # URLs.
+		var epSafeLinkUrl = function( url ) {
+			url = String( url || '' ).trim();
+			return /^(https?:|mailto:|tel:|\/|#|\?|\.)/i.test( url ) || ! /^[^\/?#]*:/.test( url ) ? url : '';
+		};
 		var skin = settings._skin || '';
 		var hasAltPhoto = settings.member_alternative_photo && settings.alternative_photo && settings.alternative_photo.url;
 		var hoverAnimClass = ( settings.photo_hover_animation && settings.photo_hover_animation !== '' ) ? 'bdt-transition-scale-' + settings.photo_hover_animation : '';
@@ -1442,7 +1450,7 @@ class Member extends Module_Base {
 		<div class="bdt-member skin-band bdt-transition-toggle">
 			<div class="bdt-member-item-wrapper">
 				<# if ( settings.photo && settings.photo.url ) { #>
-				<div class="bdt-member-photo-wrapper<# print( maskClass ); #>">
+				<div class="bdt-member-photo-wrapper{{ maskClass }}">
 					<# if ( hasAltPhoto ) { #>
 					<div class="bdt-position-relative bdt-overflow-hidden"
 						bdt-toggle="target: &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;">
@@ -1451,7 +1459,7 @@ class Member extends Module_Base {
 						</div>
 					<# } #>
 					<div class="bdt-member-photo">
-						<div class="<# print( hoverAnimClass ); #>">
+						<div class="{{ hoverAnimClass }}">
 							<img src="{{ settings.photo.url }}" alt="{{ settings.name }}">
 						</div>
 					</div>
@@ -1470,7 +1478,7 @@ class Member extends Module_Base {
 		</div>
 
 		<# } else if ( skin === 'bdt-calm' ) { #>
-		<div class="bdt-member skin-calm bdt-transition-toggle bdt-inline<# print( maskClass ); #><# if ( hasAltPhoto ) { #> bdt-position-relative bdt-overflow-hidden bdt-transition-toggle<# } #>"<# if ( hasAltPhoto ) { #> bdt-toggle="target: &gt; div &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;"<# } #>>
+		<div class="bdt-member skin-calm bdt-transition-toggle bdt-inline{{ maskClass }}<# if ( hasAltPhoto ) { #> bdt-position-relative bdt-overflow-hidden bdt-transition-toggle<# } #>"<# if ( hasAltPhoto ) { #> bdt-toggle="target: &gt; div &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;"<# } #>>
 			<# if ( settings.photo && settings.photo.url ) { #>
 			<div class="bdt-member-photo-wrapper">
 				<# if ( hasAltPhoto ) { #>
@@ -1479,7 +1487,7 @@ class Member extends Module_Base {
 				</div>
 				<# } #>
 				<div class="bdt-member-photo">
-					<div class="<# print( hoverAnimClass ); #>">
+					<div class="{{ hoverAnimClass }}">
 						<img src="{{ settings.photo.url }}" alt="{{ settings.name }}">
 					</div>
 				</div>
@@ -1497,7 +1505,7 @@ class Member extends Module_Base {
 		</div>
 
 		<# } else if ( skin === 'bdt-ekip' ) { #>
-		<div class="bdt-member skin-ekip bdt-transition-toggle<# print( maskClass ); #><# if ( hasAltPhoto ) { #> bdt-position-relative bdt-overflow-hidden bdt-transition-toggle<# } #>"<# if ( hasAltPhoto ) { #> bdt-toggle="target: &gt; div &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;"<# } #>>
+		<div class="bdt-member skin-ekip bdt-transition-toggle{{ maskClass }}<# if ( hasAltPhoto ) { #> bdt-position-relative bdt-overflow-hidden bdt-transition-toggle<# } #>"<# if ( hasAltPhoto ) { #> bdt-toggle="target: &gt; div &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;"<# } #>>
 			<# if ( settings.photo && settings.photo.url ) { #>
 			<div class="bdt-member-photo-wrapper">
 				<# if ( hasAltPhoto ) { #>
@@ -1506,7 +1514,7 @@ class Member extends Module_Base {
 				</div>
 				<# } #>
 				<div class="bdt-member-photo">
-					<div class="<# print( hoverAnimClass ); #>">
+					<div class="{{ hoverAnimClass }}">
 						<img src="{{ settings.photo.url }}" alt="{{ settings.name }}">
 					</div>
 				</div>
@@ -1524,7 +1532,7 @@ class Member extends Module_Base {
 		</div>
 
 		<# } else if ( skin === 'bdt-phaedra' ) { #>
-		<div class="bdt-member skin-phaedra bdt-transition-toggle<# print( maskClass ); #><# if ( hasAltPhoto ) { #> bdt-position-relative bdt-overflow-hidden bdt-transition-toggle<# } #>"<# if ( hasAltPhoto ) { #> bdt-toggle="target: &gt; div &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;"<# } #>>
+		<div class="bdt-member skin-phaedra bdt-transition-toggle{{ maskClass }}<# if ( hasAltPhoto ) { #> bdt-position-relative bdt-overflow-hidden bdt-transition-toggle<# } #>"<# if ( hasAltPhoto ) { #> bdt-toggle="target: &gt; div &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;"<# } #>>
 			<# if ( settings.photo && settings.photo.url ) { #>
 			<div class="bdt-member-photo-wrapper">
 				<# if ( hasAltPhoto ) { #>
@@ -1533,7 +1541,7 @@ class Member extends Module_Base {
 				</div>
 				<# } #>
 				<div class="bdt-member-photo">
-					<div class="<# print( hoverAnimClass ); #>">
+					<div class="{{ hoverAnimClass }}">
 						<img src="{{ settings.photo.url }}" alt="{{ settings.name }}">
 					</div>
 				</div>
@@ -1554,7 +1562,7 @@ class Member extends Module_Base {
 		<div class="bdt-member skin-partait">
 			<div class="bdt-grid bdt-grid-collapse bdt-child-width-1-2@m" data-bdt-grid>
 				<# if ( settings.photo && settings.photo.url ) { #>
-				<div class="bdt-member-photo-wrapper<# print( maskClass ); #>">
+				<div class="bdt-member-photo-wrapper{{ maskClass }}">
 					<# if ( hasAltPhoto ) { #>
 					<div class="bdt-position-relative bdt-overflow-hidden"
 						bdt-toggle="target: &gt; .bdt-member-photo-flip; mode: hover; animation: bdt-animation-fade; queued: true; duration: 300;">
@@ -1563,7 +1571,7 @@ class Member extends Module_Base {
 						</div>
 					<# } #>
 					<div class="bdt-member-photo">
-						<div class="<# print( hoverAnimClass ); #>">
+						<div class="{{ hoverAnimClass }}">
 							<img src="{{ settings.photo.url }}" alt="{{ settings.name }}">
 						</div>
 					</div>
@@ -1586,11 +1594,11 @@ class Member extends Module_Base {
 		</div>
 
 		<# } else if ( skin === 'bdt-flip' ) { #>
-		<div class="bdt-member skin-flip bdt-transition-toggle bdt-inline<# print( maskClass ); #>">
+		<div class="bdt-member skin-flip bdt-transition-toggle bdt-inline{{ maskClass }}">
 			<# var flipFrontUrl = ( settings.photo && settings.photo.url ) ? settings.photo.url : '';
 			var flipBackUrl = ( settings.member_alternative_photo === 'yes' && settings.alternative_photo && settings.alternative_photo.url ) ? settings.alternative_photo.url : '';
 			#>
-			<div class="bdt-skin-flip-layer bdt-skin-flip-front" style="background-image: url('<# print( flipFrontUrl ); #>');">
+			<div class="bdt-skin-flip-layer bdt-skin-flip-front" style="background-image: url('{{ flipFrontUrl }}');">
 				<div class="bdt-skin-flip-layer-overlay">
 					<div class="bdt-skin-flip-layer-inner">
 						<div class="bdt-member-content bdt-position-bottom-center">
@@ -1600,7 +1608,7 @@ class Member extends Module_Base {
 					</div>
 				</div>
 			</div>
-			<div class="bdt-skin-flip-layer bdt-skin-flip-back" style="background-image: url('<# print( flipBackUrl ); #>');">
+			<div class="bdt-skin-flip-layer bdt-skin-flip-back" style="background-image: url('{{ flipBackUrl }}');">
 				<div class="bdt-skin-flip-layer-overlay">
 					<div class="bdt-skin-flip-layer-inner">
 						<?php $this->print_member_social_icons_content_template( 'bdt-position-bottom-center' ); ?>
@@ -1624,7 +1632,7 @@ class Member extends Module_Base {
 							</div>
 					<# } #>
 					<div class="bdt-member-photo">
-						<div class="<# print( hoverAnimClass ); #>">
+						<div class="{{ hoverAnimClass }}">
 							<img src="{{ settings.photo.url }}" alt="{{ settings.name }}">
 						</div>
 					</div>

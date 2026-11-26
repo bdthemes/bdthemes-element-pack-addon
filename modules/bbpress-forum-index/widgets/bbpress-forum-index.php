@@ -829,7 +829,7 @@ class Bbpress_Forum_Index extends Module_Base {
 					<div>
 						<label class="screen-reader-text hidden" for="bbp_search"><?php esc_html_e('Search for:', 'bdthemes-element-pack'); ?></label>
 						<input type="hidden" name="action" value="bbp-search-request" />
-						<input type="text" value="<?php bbp_search_terms(); ?>" name="bbp_search" id="bbp_search" />
+						<input type="text" value="<?php echo esc_attr( element_pack_escape_shortcode_brackets( bbp_get_search_terms() ) ); // Request input printed into the_content: no literal [ ] (shortcodes). ?>" name="bbp_search" id="bbp_search" />
 						<input class="button" type="submit" id="bbp_search_submit" value="<?php esc_attr_e('Search', 'bdthemes-element-pack'); ?>" />
 					</div>
 				</form>

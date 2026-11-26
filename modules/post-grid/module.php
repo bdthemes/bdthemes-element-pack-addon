@@ -30,12 +30,49 @@ class Module extends Element_Pack_Module_Base {
 	}
 
 
+	/**
+	 * Post types the load-more request may list: public ones that are not
+	 * excluded from search, without media and saved templates / builder content.
+	 *
+	 * @return string[]
+	 */
+	private static function get_loadmore_post_types() {
+		return array_values( array_diff(
+			get_post_types( [ 'public' => true, 'exclude_from_search' => false ] ),
+			[ 'attachment', 'elementor_library', 'bdt-template-builder', 'ep_megamenu_content', 'e-floating-buttons', 'bdt-custom-template' ]
+		) );
+	}
+
 	public function callback_ajax_loadmore_posts() {
 
 		if (!isset($_POST['settings']['nonce']) || !wp_verify_nonce( sanitize_key( wp_unslash( $_POST['settings']['nonce'] ) ), 'bdt-post-grid-load-more-nonce')) {
 			exit;
 		}
+
+		// Visitors call this (the nonce is printed for everyone), and Pro's query
+		// helper copies settings[posts_source] into post_type, so the request could
+		// list the titles of any post type (coupon codes, form messages). Accept
+		// only a public, searchable type or one of the helper's special sources,
+		// whatever the installed Pro does.
+		$allowed_types = self::get_loadmore_post_types();
+		// Checked exactly as the helper reads it, and only compared against the allowlist.
+		$posts_source  = isset( $_POST['settings']['posts_source'] ) ? $_POST['settings']['posts_source'] : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+
+		if ( ! is_string( $posts_source ) || ! in_array( $posts_source, array_merge( $allowed_types, [ 'manual_selection', 'current_query', '_related_post_type' ] ), true ) ) {
+			wp_send_json( [ 'markup' => '' ] );
+		}
+
+		// 'manual_selection' makes the helper query post_type 'any', which WP_Query
+		// expands to every type not excluded from search, public or not.
+		$limit_any = static function ( $query ) use ( $allowed_types ) {
+			if ( 'any' === $query->get( 'post_type' ) ) {
+				$query->set( 'post_type', $allowed_types );
+			}
+		};
+
+		add_action( 'pre_get_posts', $limit_any );
 		$ajaxposts = element_pack_ajax_load_query_args();
+		remove_action( 'pre_get_posts', $limit_any );
 		$markup    = '';
 		if ($ajaxposts->have_posts()) {
 			$item_index = 1;

@@ -24,10 +24,15 @@
             return;
         }
 
+        // data-settings can come from markup that only imitates the widget, and
+        // Swiper builds some string options as HTML. Element Pack Pro's helper
+        // (10.0.11+) drops those values; without it the carousel is left as is.
+        if (typeof epSafeSwiperSettings !== 'function') return;
+
         const Swiper = window.elementorFrontend.utils.swiper;
 
         async function initSwiper() {
-            const swiper = await new Swiper(carouselContainer, settings);
+            const swiper = await new Swiper(carouselContainer, epSafeSwiperSettings(settings));
 
             if (settings.pauseOnHover) {
                 carouselContainer.addEventListener('mouseenter', () => swiper.autoplay.stop());

@@ -104,7 +104,13 @@
 
         // ── DataTable init (jQuery DataTables plugin — jQuery required) ───────
 
-        const table = jQuery(settings.tableId).DataTable({
+        // The widget prints its table inside the wrapper. settings.tableId is
+        // not used: data-settings can come from markup that only imitates the
+        // widget, and jQuery() builds elements from a string holding markup.
+        const tableEl = cryptoWidget.querySelector('table');
+        if (!tableEl) return;
+
+        const table = jQuery(tableEl).DataTable({
             language    : window.ElementPackConfig.data_table.language,
             destroy     : true,
             processing  : true,
