@@ -1,3 +1,9 @@
+## 1.0.1 [26th November 2026]
+
+### Fixed
+
+- Security fixes for the legacy widgets (output escaping and input validation across post, crypto currency and third-party widgets)
+
 ## 1.0.0 [XXth September 2026]
 
 ### Added
