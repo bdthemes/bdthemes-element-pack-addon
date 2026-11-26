@@ -25,11 +25,11 @@ class Skin_Climax extends Elementor_Skin_Base {
 			$target = ( ! empty( $settings['global_link_url']['is_external'] ) && $settings['global_link_url']['is_external'] )
 				? '_blank'
 				: '_self';
-			$this->parent->add_render_attribute(
-				'fancy-card',
-				'onclick',
-				"window.open('" . esc_url( $settings['global_link_url']['url'] ) . "', '" . esc_attr( $target ) . "')"
-			);
+			// JSON-encoded and scheme-checked: esc_url() inside a quoted JS string is not safe.
+			$onclick = element_pack_window_open_handler( $settings['global_link_url']['url'], '_blank' === $target );
+			if ( '' !== $onclick ) {
+				$this->parent->add_render_attribute( 'fancy-card', 'onclick', $onclick );
+			}
 		}
 
 		$toggle_position = isset( $settings['toggle_position'] ) ? $settings['toggle_position'] : 'bottom-right';

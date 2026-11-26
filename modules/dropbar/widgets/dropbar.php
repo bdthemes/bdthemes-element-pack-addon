@@ -10,7 +10,6 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Icons_Manager;
 
-use ElementPack\Element_Pack_Loader;
 use ElementPack\Includes\Controls\SelectInput\Dynamic_Select;
 
 use ElementPack\Traits\Global_Widget_Controls;
@@ -858,12 +857,12 @@ class Dropbar extends Module_Base {
 					if ('custom' == $settings['source'] and !empty($settings['content'])) {
 						echo wp_kses_post($settings['content']);
 					} elseif ("elementor" == $settings['source'] and !empty($settings['template_id'])) {
-						// PHPCS - should not be escaped.
-						echo Element_Pack_Loader::elementor()->frontend->get_builder_content_for_display($settings['template_id'], true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						// Rendered only when the viewer may read it (the ID is a widget setting). PHPCS - should not be escaped.
+						echo element_pack_render_template( $settings['template_id'], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						echo wp_kses( element_pack_template_edit_link($settings['template_id']), element_pack_allow_tags( 'text' ) );
 					} elseif ('anywhere' == $settings['source'] and !empty($settings['anywhere_id'])) {
-						// PHPCS - should not be escaped.
-						echo Element_Pack_Loader::elementor()->frontend->get_builder_content_for_display($settings['anywhere_id'], true); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						// Rendered only when the viewer may read it (the ID is a widget setting). PHPCS - should not be escaped.
+						echo element_pack_render_template( $settings['anywhere_id'], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						echo wp_kses( element_pack_template_edit_link($settings['anywhere_id']), element_pack_allow_tags( 'text' ) );
 					}
 					?>

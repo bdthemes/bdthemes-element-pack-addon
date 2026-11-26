@@ -38,6 +38,8 @@ class Loader {
 		spl_autoload_register( [ $this, 'autoload' ] );
 
 		require_once BDTEPA_INC_PATH . 'class-wpml.php';
+		// After Pro has loaded: only defines the Pro helpers an older Pro lacks.
+		require_once BDTEPA_INC_PATH . 'security-helpers.php';
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_vendor_scripts' ], 99999 );
 		// Priority 9: Pro enqueues ep-styles at 10, and our stylesheet has to come
@@ -144,7 +146,10 @@ class Loader {
 	public function register_bundles() {
 		// Same deps as Pro's per-widget styles; must NOT depend on ep-styles (see the hook priority note).
 		wp_register_style( 'ep-addon-styles', BDTEPA_ASSETS_URL . 'css/ep-addon-styles.css', [ 'bdt-uikit', 'ep-helper' ], BDTEPA_VER );
-		wp_register_script( 'ep-addon-scripts', BDTEPA_ASSETS_URL . 'js/ep-addon-scripts.min.js', [ 'jquery', 'bdt-uikit', 'ep-scripts' ], BDTEPA_VER, true );
+		// The module scripts call Pro's helper globals (epSafeSwiperSettings, debounce, ...).
+		// ep-scripts loads them too, but say so: Pro registers every ep-<module> handle
+		// with the same dependency.
+		wp_register_script( 'ep-addon-scripts', BDTEPA_ASSETS_URL . 'js/ep-addon-scripts.min.js', [ 'jquery', 'bdt-uikit', 'element-pack-helper', 'ep-scripts' ], BDTEPA_VER, true );
 
 		if ( $this->is_edit_or_preview() ) {
 			wp_enqueue_style( 'ep-addon-styles' );

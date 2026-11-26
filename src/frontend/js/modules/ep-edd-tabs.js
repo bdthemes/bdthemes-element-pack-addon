@@ -5,11 +5,13 @@
 (() => {
     'use strict';
 
-    const wrapInner = (parentEl, html) => {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        const wrapper = tmp.firstElementChild;
-        if (!wrapper) return;
+    // Moves every child of parentEl into a new <div>, which becomes its only child.
+    // The wrapper is built with DOM methods: its id comes from data-settings, which
+    // can come from markup that only imitates the widget.
+    const wrapInner = (parentEl, className, id) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = className;
+        if (id !== undefined) wrapper.id = id;
         while (parentEl.firstChild) wrapper.appendChild(parentEl.firstChild);
         parentEl.appendChild(wrapper);
     };
@@ -128,6 +130,8 @@
         const activeItem = (settings.activeItem || 1) - 1;
 
         if (linkWidget && !editMode) {
+            const linkContentId = 'bdt-tab-content-' + String(settings.linkWidgetId);
+
             linkWidget.forEach((entrySelector, index) => {
                 const entryEl = document.querySelector(entrySelector);
                 if (!entryEl) return;
@@ -136,11 +140,11 @@
                 if (!parent) return;
 
                 if (index === 0) {
-                    const contentEl = document.getElementById('bdt-tab-content-' + settings.linkWidgetId);
+                    const contentEl = document.getElementById(linkContentId);
                     contentEl?.parentElement?.remove();
 
-                    wrapInner(parent, '<div class="bdt-switcher-wrapper"></div>');
-                    wrapInner(parent, `<div id="bdt-tab-content-${settings.linkWidgetId}" class="bdt-switcher bdt-switcher-item-content"></div>`);
+                    wrapInner(parent, 'bdt-switcher-wrapper');
+                    wrapInner(parent, 'bdt-switcher bdt-switcher-item-content', linkContentId);
 
                     if (settings.activeItem === undefined) {
                         entryEl.classList.add('bdt-active');

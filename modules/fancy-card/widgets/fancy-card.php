@@ -2455,11 +2455,11 @@ class Fancy_Card extends Module_Base {
 			$target = ( ! empty( $settings['title_link_url']['is_external'] ) && $settings['title_link_url']['is_external'] )
 				? '_blank'
 				: '_self';
-			$this->add_render_attribute(
-				'fancy-card-title',
-				'onclick',
-				"window.open('" . esc_url( $settings['title_link_url']['url'] ) . "', '" . esc_attr( $target ) . "')"
-			);
+			// JSON-encoded and scheme-checked: esc_url() inside a quoted JS string is not safe.
+			$onclick = element_pack_window_open_handler( $settings['title_link_url']['url'], '_blank' === $target );
+			if ( '' !== $onclick ) {
+				$this->add_render_attribute( 'fancy-card-title', 'onclick', $onclick );
+			}
 		}
 
 		if ( empty( $settings['title_text'] ) ) {
@@ -2607,11 +2607,11 @@ class Fancy_Card extends Module_Base {
 			$target = ( ! empty( $settings['global_link_url']['is_external'] ) && $settings['global_link_url']['is_external'] )
 				? '_blank'
 				: '_self';
-			$this->add_render_attribute(
-				'fancy-card',
-				'onclick',
-				"window.open('" . esc_url( $settings['global_link_url']['url'] ) . "', '" . esc_attr( $target ) . "')"
-			);
+			// JSON-encoded and scheme-checked: esc_url() inside a quoted JS string is not safe.
+			$onclick = element_pack_window_open_handler( $settings['global_link_url']['url'], '_blank' === $target );
+			if ( '' !== $onclick ) {
+				$this->add_render_attribute( 'fancy-card', 'onclick', $onclick );
+			}
 		}
 
 		// Base and icon position classes.
@@ -2642,6 +2642,20 @@ class Fancy_Card extends Module_Base {
 	protected function content_template() {
 		?>
 		<#
+		// Settings are page data (any editor can save them): the tag is allow-listed,
+		// links accept only web, mail, phone, relative and # URLs, and onclick URLs are
+		// JSON-encoded, never spliced into a quoted JS string.
+		var epSafeLinkUrl = function( url ) {
+			url = String( url || '' ).trim();
+			return /^(https?:|mailto:|tel:|\/|#|\?|\.)/i.test( url ) || ! /^[^\/?#]*:/.test( url ) ? url : '';
+		};
+		var epWindowOpen = function( url, isNew ) {
+			url = epSafeLinkUrl( url );
+			return url ? 'window.open(' + JSON.stringify( url ) + ', ' + JSON.stringify( isNew ? '_blank' : '_self' ) + ')' : '';
+		};
+		var globalOnclick = ( settings.global_link === 'yes' && settings.global_link_url && settings.global_link_url.url ) ? epWindowOpen( settings.global_link_url.url, settings.global_link_url.is_external ) : '';
+		var titleOnclick = ( settings.title_link === 'yes' && settings.title_link_url && settings.title_link_url.url ) ? epWindowOpen( settings.title_link_url.url, settings.title_link_url.is_external ) : '';
+
 		var skinId = settings._skin || '';
 		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i', 'object' );
 		var iconType = settings.icon_type ? settings.icon_type : 'icon';
@@ -2667,7 +2681,7 @@ class Fancy_Card extends Module_Base {
 		};
 		var stackClasses = stackClassMap[ stackStyle ] || 'bdt-ep-fancy-card bdt-ep-fancy-card-stack';
 
-		var titleTag = settings.title_size ? settings.title_size : 'h3';
+		var titleTag = elementor.helpers.validateHTMLTag( settings.title_size || 'h3' );
 		var dataLabel = ( settings.show_data_label === 'yes' ) ? settings.title_text : '';
 
 		var readmoreClasses = 'bdt-ep-fancy-card-readmore';
@@ -2682,7 +2696,7 @@ class Fancy_Card extends Module_Base {
 		var readmoreHasIcon = settings.advanced_readmore_icon && settings.advanced_readmore_icon.library;
 		var readmoreIconAlign = settings.readmore_icon_align ? settings.readmore_icon_align : 'right';
 		var readLabel = settings.readmore_text ? settings.readmore_text : 'Read More';
-		var readmoreHref = ( settings.readmore_link && settings.readmore_link.url ) ? settings.readmore_link.url : '#';
+		var readmoreHref = ( settings.readmore_link && epSafeLinkUrl( settings.readmore_link.url ) ) || '#';
 
 		var badgePosition = settings.badge_position ? settings.badge_position : 'top-right';
 		var indicatorStyle = settings.indicator_style ? settings.indicator_style : '1';
@@ -2691,13 +2705,11 @@ class Fancy_Card extends Module_Base {
 		var togglePos = settings.toggle_position ? settings.toggle_position : 'bottom-right';
 		#>
 		<# if ( skinId === 'batty' ) { #>
-		<div class="bdt-ep-fancy-card bdt-ep-fancy-card-batty"<# if ( settings.global_link === 'yes' && settings.global_link_url && settings.global_link_url.url ) {
-			var gT = settings.global_link_url.is_external ? '_blank' : '_self';
-		#> onclick="window.open('{{ settings.global_link_url.url }}', '{{ gT }}')"<# } #>>
+		<div class="bdt-ep-fancy-card bdt-ep-fancy-card-batty"<# if ( globalOnclick ) { #> onclick="{{ globalOnclick }}"<# } #>>
 			<div class="bdt-ep-fancy-card-face bdt-ep-fancy-card-face1">
 				<div class="bdt-ep-fancy-card-content">
 					<# if ( settings.title_text ) { #>
-					<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( settings.title_link === 'yes' && settings.title_link_url && settings.title_link_url.url ) { var tt = settings.title_link_url.is_external ? '_blank' : '_self'; #> onclick="window.open('{{ settings.title_link_url.url }}', '{{ tt }}')"<# } #>>
+					<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( titleOnclick ) { #> onclick="{{ titleOnclick }}"<# } #>>
 						<span>{{{ settings.title_text }}}</span>
 					</{{ titleTag }}>
 					<# } #>
@@ -2724,9 +2736,7 @@ class Fancy_Card extends Module_Base {
 			</div>
 		</div>
 		<# } else if ( skinId === 'climax' ) { #>
-		<div class="bdt-ep-fancy-card bdt-ep-fancy-card-climax"<# if ( settings.global_link === 'yes' && settings.global_link_url && settings.global_link_url.url ) {
-			var gT2 = settings.global_link_url.is_external ? '_blank' : '_self';
-		#> onclick="window.open('{{ settings.global_link_url.url }}', '{{ gT2 }}')"<# } #>>
+		<div class="bdt-ep-fancy-card bdt-ep-fancy-card-climax"<# if ( globalOnclick ) { #> onclick="{{ globalOnclick }}"<# } #>>
 			<input class="bdt-checkbox bdt-position-{{ togglePos }}" type="checkbox">
 			<div class="bdt-ep-fancy-card-toggole bdt-position-{{ togglePos }}">
 				<# if ( toggleIconHTML && toggleIconHTML.rendered && settings.toggle_icon && settings.toggle_icon.value ) { #>{{{ toggleIconHTML.value }}}<# } #>
@@ -2738,7 +2748,7 @@ class Fancy_Card extends Module_Base {
 			<# } #>
 			<div class="bdt-ep-fancy-card-content">
 				<# if ( settings.title_text ) { #>
-				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( settings.title_link === 'yes' && settings.title_link_url && settings.title_link_url.url ) { var tt2 = settings.title_link_url.is_external ? '_blank' : '_self'; #> onclick="window.open('{{ settings.title_link_url.url }}', '{{ tt2 }}')"<# } #>>
+				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( titleOnclick ) { #> onclick="{{ titleOnclick }}"<# } #>>
 					<span>{{{ settings.title_text }}}</span>
 				</{{ titleTag }}>
 				<# } #>
@@ -2757,9 +2767,7 @@ class Fancy_Card extends Module_Base {
 			</div>
 		</div>
 		<# } else if ( skinId === 'stack' ) { #>
-		<div class="{{ stackClasses }}"<# if ( settings.global_link === 'yes' && settings.global_link_url && settings.global_link_url.url ) {
-			var gT3 = settings.global_link_url.is_external ? '_blank' : '_self';
-		#> onclick="window.open('{{ settings.global_link_url.url }}', '{{ gT3 }}')"<# } #>>
+		<div class="{{ stackClasses }}"<# if ( globalOnclick ) { #> onclick="{{ globalOnclick }}"<# } #>>
 			<# if ( hasIcon ) { #>
 			<div class="bdt-ep-fancy-card-icon" data-label="{{ dataLabel }}"><span class="bdt-ep-fancy-card-icon-inner">{{{ iconHTML.value }}}</span></div>
 			<# } else if ( hasImage ) { #>
@@ -2768,7 +2776,7 @@ class Fancy_Card extends Module_Base {
 			<div class="bdt-ep-fancy-card-content-overlay"></div>
 			<div class="bdt-ep-fancy-card-content">
 				<# if ( settings.title_text ) { #>
-				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( settings.title_link === 'yes' && settings.title_link_url && settings.title_link_url.url ) { var tt3 = settings.title_link_url.is_external ? '_blank' : '_self'; #> onclick="window.open('{{ settings.title_link_url.url }}', '{{ tt3 }}')"<# } #>>
+				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( titleOnclick ) { #> onclick="{{ titleOnclick }}"<# } #>>
 					<span>{{{ settings.title_text }}}</span>
 				</{{ titleTag }}>
 				<# } #>
@@ -2787,9 +2795,7 @@ class Fancy_Card extends Module_Base {
 			</div>
 		</div>
 		<# } else if ( skinId === 'flux' ) { #>
-		<div class="bdt-ep-fancy-card bdt-ep-fancy-card-flux"<# if ( settings.global_link === 'yes' && settings.global_link_url && settings.global_link_url.url ) {
-			var gT4 = settings.global_link_url.is_external ? '_blank' : '_self';
-		#> onclick="window.open('{{ settings.global_link_url.url }}', '{{ gT4 }}')"<# } #>>
+		<div class="bdt-ep-fancy-card bdt-ep-fancy-card-flux"<# if ( globalOnclick ) { #> onclick="{{ globalOnclick }}"<# } #>>
 			<# if ( hasIcon ) { #>
 			<div class="bdt-ep-fancy-card-icon" data-label="{{ dataLabel }}"><span class="bdt-ep-fancy-card-icon-inner">{{{ iconHTML.value }}}</span></div>
 			<# } else if ( hasImage ) { #>
@@ -2797,7 +2803,7 @@ class Fancy_Card extends Module_Base {
 			<# } #>
 			<div class="bdt-ep-fancy-card-content">
 				<# if ( settings.title_text ) { #>
-				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( settings.title_link === 'yes' && settings.title_link_url && settings.title_link_url.url ) { var tt4 = settings.title_link_url.is_external ? '_blank' : '_self'; #> onclick="window.open('{{ settings.title_link_url.url }}', '{{ tt4 }}')"<# } #>>
+				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( titleOnclick ) { #> onclick="{{ titleOnclick }}"<# } #>>
 					<span>{{{ settings.title_text }}}</span>
 				</{{ titleTag }}>
 				<# } #>
@@ -2816,9 +2822,7 @@ class Fancy_Card extends Module_Base {
 			</div>
 		</div>
 		<# } else { #>
-		<div class="{{ cardClasses }}"<# if ( settings.global_link === 'yes' && settings.global_link_url && settings.global_link_url.url ) {
-			var gT5 = settings.global_link_url.is_external ? '_blank' : '_self';
-		#> onclick="window.open('{{ settings.global_link_url.url }}', '{{ gT5 }}')"<# } #>>
+		<div class="{{ cardClasses }}"<# if ( globalOnclick ) { #> onclick="{{ globalOnclick }}"<# } #>>
 			<# if ( hasIcon ) { #>
 			<div class="bdt-ep-fancy-card-icon" data-label="{{ dataLabel }}"><span class="bdt-ep-fancy-card-icon-inner">{{{ iconHTML.value }}}</span></div>
 			<# } else if ( hasImage ) { #>
@@ -2826,7 +2830,7 @@ class Fancy_Card extends Module_Base {
 			<# } #>
 			<div class="bdt-ep-fancy-card-content">
 				<# if ( settings.title_text ) { #>
-				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( settings.title_link === 'yes' && settings.title_link_url && settings.title_link_url.url ) { var tt5 = settings.title_link_url.is_external ? '_blank' : '_self'; #> onclick="window.open('{{ settings.title_link_url.url }}', '{{ tt5 }}')"<# } #>>
+				<{{ titleTag }} class="bdt-ep-fancy-card-title"<# if ( titleOnclick ) { #> onclick="{{ titleOnclick }}"<# } #>>
 					<span>{{{ settings.title_text }}}</span>
 				</{{ titleTag }}>
 				<# } #>

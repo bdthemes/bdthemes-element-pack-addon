@@ -1631,8 +1631,15 @@ class Image_Accordion extends Module_Base {
 	protected function content_template() {
 		?>
 		<#
+		// Settings are page data (any editor can save them): allow-list the tag, keep
+		// data-settings inside an escaped, double-quoted attribute, and only link web,
+		// mail, phone, relative and # URLs.
+		var epSafeLinkUrl = function( url ) {
+			url = String( url || '' ).trim();
+			return /^(https?:|mailto:|tel:|\/|#|\?|\.)/i.test( url ) || ! /^[^\/?#]*:/.test( url ) ? url : '';
+		};
 		var skinType = settings.skin_type || 'default';
-		var titleTag = settings.title_tags || 'h3';
+		var titleTag = elementor.helpers.validateHTMLTag( settings.title_tags || 'h3' );
 		var items = settings.image_accordion_items || [];
 
 		var accordionId = 'bdt-ep-image-accordion-' + view.getID();
@@ -1685,11 +1692,12 @@ class Image_Accordion extends Module_Base {
 			buttonWrapClass += ' bdt-visible@s';
 		}
 		#>
-		<div id="{{ accordionId }}" class="bdt-ep-image-accordion" data-settings='{{{ dataSettings }}}'<# if ( lbAttr ) { #> data-bdt-lightbox="{{ lbAttr }}"<# } #>>
+		<div id="{{ accordionId }}" class="bdt-ep-image-accordion" data-settings="{{ dataSettings }}"<# if ( lbAttr ) { #> data-bdt-lightbox="{{ lbAttr }}"<# } #>>
 			<# _.each( items, function( item ) {
 				var slideImage = ( item.slide_image && item.slide_image.url ) ? item.slide_image.url : '';
-				var titleLinkUrl = ( item.title_link && item.title_link.url ) ? item.title_link.url : '';
-				var buttonLinkUrl = ( item.button_link && item.button_link.url ) ? item.button_link.url : '';
+				var slideImageHref = epSafeLinkUrl( slideImage );
+				var titleLinkUrl = ( item.title_link && item.title_link.url ) ? epSafeLinkUrl( item.title_link.url ) : '';
+				var buttonLinkUrl = ( item.button_link && item.button_link.url ) ? epSafeLinkUrl( item.button_link.url ) : '';
 				var titleTarget = ( item.title_link && item.title_link.is_external ) ? '_blank' : '_self';
 				var titleRel = '';
 				if ( item.title_link && item.title_link.is_external ) {
@@ -1710,8 +1718,8 @@ class Image_Accordion extends Module_Base {
 			#>
 			<# if ( skinType !== 'sliding-box' ) { #>
 			<div class="bdt-ep-image-accordion-item" style="background-image: url('{{ slideImage }}');">
-				<# if ( settings.show_lightbox === 'yes' && slideImage ) { #>
-				<a class="bdt-ep-image-accordion-lightbox" href="{{ slideImage }}" data-elementor-open-lightbox="no"<# if ( caption ) { #> data-caption="{{ caption }}"<# } #>>
+				<# if ( settings.show_lightbox === 'yes' && slideImageHref ) { #>
+				<a class="bdt-ep-image-accordion-lightbox" href="{{ slideImageHref }}" data-elementor-open-lightbox="no"<# if ( caption ) { #> data-caption="{{ caption }}"<# } #>>
 					<# if ( settings.link_type === 'text' && settings.link_text ) { #>
 					<span class="bdt-text">{{{ settings.link_text }}}</span>
 					<# } else { #>
@@ -1756,8 +1764,8 @@ class Image_Accordion extends Module_Base {
 					<# if ( slideImage ) { #>
 					<img src="{{ slideImage }}" alt="{{ item.image_accordion_title }}">
 					<# } #>
-					<# if ( settings.show_lightbox === 'yes' && slideImage ) { #>
-					<a class="bdt-ep-image-accordion-lightbox" href="{{ slideImage }}" data-elementor-open-lightbox="no"<# if ( caption ) { #> data-caption="{{ caption }}"<# } #>>
+					<# if ( settings.show_lightbox === 'yes' && slideImageHref ) { #>
+					<a class="bdt-ep-image-accordion-lightbox" href="{{ slideImageHref }}" data-elementor-open-lightbox="no"<# if ( caption ) { #> data-caption="{{ caption }}"<# } #>>
 						<# if ( settings.link_type === 'text' && settings.link_text ) { #>
 						<span class="bdt-text">{{{ settings.link_text }}}</span>
 						<# } else { #>

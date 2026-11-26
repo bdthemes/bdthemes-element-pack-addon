@@ -5,6 +5,23 @@
 (() => {
   "use strict";
 
+  // The redirect comes from data-settings, which can come from markup that only
+  // imitates the widget. Only http(s) URLs (relative ones resolve to the page's
+  // own scheme) may be opened; anything else, javascript: included, means no
+  // redirect.
+  const safeRedirectLink = (link) => {
+    if (typeof link !== "string" || link === "") {
+      return false;
+    }
+
+    try {
+      const url = new URL(link, window.location.href);
+      return url.protocol === "http:" || url.protocol === "https:" ? url.href : false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   class AgeGateModal {
     constructor(element, settings, isEditMode) {
       this.element = element;
@@ -72,7 +89,7 @@
       let firedNotify = parseInt(localStorage.getItem(this.widgetId), 10) || 0;
       const modal = this.element;
       const buttons = modal.querySelectorAll(".bdt-button");
-      const redirectLink = this.isEditMode ? false : this.settings.redirect_link;
+      const redirectLink = this.isEditMode ? false : safeRedirectLink(this.settings.redirect_link);
       let requiredAge = this.settings.requiredAge;
 
       buttons.forEach((button) => {

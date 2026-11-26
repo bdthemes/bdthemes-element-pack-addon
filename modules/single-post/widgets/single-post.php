@@ -501,6 +501,32 @@ class Single_Post extends Module_Base {
 		<?php
 	}
 
+	/**
+	 * Whether the viewer may see this post in the widget.
+	 *
+	 * The post ID is free text, so anyone who can edit the page (a Contributor
+	 * included) can point the widget at someone else's draft or private page, or
+	 * at records of a non-public type (coupons, form messages, data requests).
+	 * Only posts of a public type are shown, and only when they are published
+	 * and not password protected, or when the viewer may read them anyway: the
+	 * same rule as element_pack_can_render_template().
+	 *
+	 * @param \WP_Post $post Post.
+	 * @return bool
+	 */
+	protected function can_show_post( $post ) {
+		$public_types = array_diff(
+			get_post_types( [ 'public' => true ] ),
+			[ 'attachment', 'elementor_library', 'bdt-template-builder', 'ep_megamenu_content', 'e-floating-buttons', 'bdt-custom-template' ]
+		);
+
+		if ( ! in_array( $post->post_type, $public_types, true ) ) {
+			return false;
+		}
+
+		return element_pack_can_render_template( $post->ID );
+	}
+
 	protected function render() {
 
 		$settings = $this->get_settings_for_display();
@@ -508,6 +534,10 @@ class Single_Post extends Module_Base {
 		$id       = $this->get_id();
 		$post_id  = ! empty( $settings['post_list'] ) ? absint( $settings['post_list'] ) : 0;
 		$single_post = ! empty( $post_id ) ? get_post( $post_id ) : null;
+
+		if ( $single_post && ! $this->can_show_post( $single_post ) ) {
+			$single_post = null;
+		}
 
 		if ( ! $single_post ) {
 			echo '<div class="bdt-alert-warning" bdt-alert>' . esc_html_x( 'Oops! You did not select any post from settings.', 'Frontend', 'bdthemes-element-pack' ) . '</div>';

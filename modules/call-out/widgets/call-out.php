@@ -758,7 +758,13 @@ class Call_Out extends Module_Base {
 		<#
 		var iconHTML = elementor.helpers.renderIcon( view, settings.callout_icon, { 'aria-hidden': true, 'class': 'fa-fw' }, 'i', 'object' );
 		var migrated = elementor.helpers.isIconMigrated( settings, 'callout_icon' );
-		var titleTag = settings.title_size || 'h3';
+		// Settings are page data (any editor can save them): allow-list the tag and
+		// only link web, mail, phone, relative and # URLs.
+		var epSafeLinkUrl = function( url ) {
+			url = String( url || '' ).trim();
+			return /^(https?:|mailto:|tel:|\/|#|\?|\.)/i.test( url ) || ! /^[^\/?#]*:/.test( url ) ? url : '';
+		};
+		var titleTag = elementor.helpers.validateHTMLTag( settings.title_size || 'h3' );
 		var titleHtml = settings.title ? '<' + titleTag + ' class="bdt-ep-callout-title">' + settings.title + '</' + titleTag + '>' : '';
 		var calloutClass = 'bdt-ep-callout bdt-ep-callout-button-align-' + settings.button_align;
 		if ( settings.button_align !== 'center' ) {
@@ -771,7 +777,7 @@ class Call_Out extends Module_Base {
 		if ( settings.attention_button ) {
 			btnClass += ' bdt-ep-attention-button';
 		}
-		var btnHref = ( settings.link && settings.link.url ) ? settings.link.url : 'javascript:void(0);';
+		var btnHref = ( settings.link && epSafeLinkUrl( settings.link.url ) ) || 'javascript:void(0);';
 		#>
 		<div class="{{ calloutClass }}">
 			<div class="bdt-width-expand bdt-first-column">

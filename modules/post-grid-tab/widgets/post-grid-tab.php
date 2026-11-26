@@ -1354,12 +1354,14 @@ class Post_Grid_Tab extends Module_Base {
 
 	public function render_header( $skin, $settings ) {
 		$this->add_render_attribute( 'post-grid-tab', 'class', [ 'bdt-post-grid-tab', 'bdt-post-grid-tab-skin-' . $skin ] );
-		$columns_tablet = isset( $settings['columns_tablet'] ) ? $settings['columns_tablet'] : 3;
-		$columns_mobile = isset( $settings['columns_mobile'] ) ? $settings['columns_mobile'] : 2;
-		$tab_padding    = $settings['tab_padding']['size'] ?? 0;
-		$border_width   = $settings['item_border_width']['size'] ?? 10;
-		$active_tab_no  = $settings['active_tab_no']['size'] ?? 0;
-		$grid_columns   = $settings['columns'] ?? 4;
+		// gridtab writes these into a <style> tag, and a SLIDER/SELECT value is any
+		// string a page editor saves, so only numbers may reach it.
+		$columns_tablet = isset( $settings['columns_tablet'] ) ? (int) $settings['columns_tablet'] : 3;
+		$columns_mobile = isset( $settings['columns_mobile'] ) ? (int) $settings['columns_mobile'] : 2;
+		$tab_padding    = (int) ( $settings['tab_padding']['size'] ?? 0 );
+		$border_width   = (int) ( $settings['item_border_width']['size'] ?? 10 );
+		$active_tab_no  = (int) ( $settings['active_tab_no']['size'] ?? 0 );
+		$grid_columns   = (int) ( $settings['columns'] ?? 4 );
 		$grid_tab_item  = $settings['grid_tab_item'] ?? 'image';
 		$show_close     = ! empty( $settings['show_close'] );
 		$config         = [
